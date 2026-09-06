@@ -42,6 +42,11 @@ local function drawUI()
     else
         for i = 1, math.min(#playlist, 12) do
             term.setCursorPos(3, 2 + i)
+            if playlist[i] == currentSong then
+                term.setTextColor(colors.yellow)
+            else
+                term.setTextColor(colors.white)
+            end
             term.write(i .. ". " .. playlist[i])
         end
     end
@@ -57,7 +62,43 @@ local function drawUI()
 end
 
 drawUI()
-print("\n\nPress any key to exit test...")
-os.pullEvent("key")
+
+-- Event Loop
+while true do
+    local event, button, x, y = os.pullEvent()
+    
+    if event == "mouse_click" and button == 1 then
+        -- Song list clicks
+        if y >= 3 and y <= 2 + math.min(#playlist, 12) and x >= 3 then
+            local index = y - 2
+            currentSong = playlist[index]
+            statusText = "Playing"
+            drawUI()
+        end
+        
+        -- Shuffle button (X: 2-10, Y: 16)
+        if y == 16 and x >= 2 and x <= 10 then
+            shuffleEnabled = not shuffleEnabled
+            drawUI()
+        end
+        
+        -- Repeat button (X: 12-19, Y: 16)
+        if y == 16 and x >= 12 and x <= 19 then
+            repeatEnabled = not repeatEnabled
+            drawUI()
+        end
+        
+        -- Stop button (X: 43-50, Y: 16)
+        if y == 16 and x >= 43 and x <= 50 then
+            statusText = "Stopped"
+            drawUI()
+        end
+    elseif event == "key" then
+        break
+    end
+end
+
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
 term.clear()
 term.setCursorPos(1,1)
