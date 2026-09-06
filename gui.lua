@@ -1,5 +1,3 @@
-local term = require("term")
-
 local playlist = {}
 local shuffleEnabled = false
 local repeatEnabled = false
